@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Silicon Plant · Presupuesto Residencial</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --white:#fff;--bg:#f4f4f4;--t1:#1b1b1b;--t2:#393c41;
+  --t3:#5c5e62;--t4:#bcbec1;--border:#e5e5ea;
+  --accent:#3882bd;--navy:#28435a;
+  --font:'Plus Jakarta Sans',-apple-system,sans-serif;
+}
+body{font-family:var(--font);background:var(--white);color:var(--t1);}
+.hidden{display:none!important;}
+.screen{min-height:100vh;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:inline-flex;align-items:center;gap:9px;}
+.logo-text{font-size:11px;font-weight:700;letter-spacing:2.5px;}
+.dots{display:flex;gap:6px;align-items:center;}
+.dot{height:7px;border-radius:4px;background:var(--border);transition:all .3s;}
+.dot.active{background:var(--t1);}
+.dot.done{background:#888;}
+
+/* CONFIG */
+.cfg-body{max-width:640px;margin:0 auto;padding:52px 24px 110px;}
+.slabel{font-size:11px;letter-spacing:4px;color:var(--t4);text-transform:uppercase;margin-bottom:12px;}
+.stitle{font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+.ssub{font-size:14px;color:var(--t3);margin-bottom:36px;}
+
+/* SIZE */
+.size-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.sc{padding:24px 20px;border-radius:6px;cursor:pointer;border:1.5px solid var(--border);background:var(--white);transition:all .15s;user-select:none;}
+.sc:hover{border-color:#888;}
+.sc.sel{background:var(--t1);border-color:var(--t1);}
+.sc .sl{font-size:32px;font-weight:800;margin-bottom:4px;}
+.sc .sr{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--t2);}
+.sc .sd{font-size:12px;color:var(--t4);}
+.sc.sel .sl,.sc.sel .sr{color:#fff;}
+.sc.sel .sd{color:rgba(255,255,255,.5);}
+.slider-wrap{background:var(--bg);border-radius:6px;padding:20px;}
+.srow{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;}
+.skw{font-size:36px;font-weight:800;letter-spacing:-1px;}
+.skw span{font-size:15px;font-weight:400;color:var(--t3);margin-left:4px;}
+input[type=range]{width:100%;accent-color:var(--t1);cursor:pointer;}
+
+/* PANELS */
+.plist{display:flex;flex-direction:column;gap:10px;}
+.pc{padding:20px 22px;border-radius:6px;cursor:pointer;border:1.5px solid var(--border);background:var(--white);display:flex;align-items:center;gap:20px;transition:all .15s;}
+.pc:hover{border-color:#888;}
+.pc.sel{border-color:var(--t1);}
+.pcells{display:flex;flex-wrap:wrap;gap:2px;width:80px;flex-shrink:0;}
+.cell{width:12px;height:18px;border-radius:1.5px;}
+.pname{font-size:16px;font-weight:700;margin-bottom:3px;}
+.pbrand{font-size:12px;color:var(--t3);margin-bottom:2px;}
+.pwatt{font-size:12px;color:var(--t4);}
+.chk{width:22px;height:22px;border-radius:50%;margin-left:auto;flex-shrink:0;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.pc.sel .chk{background:var(--t1);border-color:var(--t1);}
+
+/* BATTERY */
+.blist{display:flex;flex-direction:column;gap:10px;}
+.bc{padding:22px;border-radius:6px;cursor:pointer;border:1.5px solid var(--border);background:var(--white);transition:all .15s;}
+.bc:hover{border-color:#888;}
+.bc.sel{border-color:var(--t1);}
+.bname{font-size:16px;font-weight:700;margin-bottom:3px;}
+.bsub{font-size:13px;color:var(--t3);}
+.btag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:10px;text-transform:uppercase;margin-left:8px;}
+.tag-s{background:#e8f4f0;color:#2a7a5a;}
+.tag-p{background:#e8effa;color:#2860a8;}
+.bfeats{margin-top:8px;display:flex;flex-direction:column;gap:3px;}
+.bfeat{font-size:12px;color:var(--t4);padding-left:12px;position:relative;}
+.bfeat::before{content:"·";position:absolute;left:0;}
+.bcargas{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.cargas-label{font-size:10px;letter-spacing:2px;color:var(--t4);text-transform:uppercase;margin-bottom:8px;}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--t2);}
+
+/* NAV BTNS */
+.snav{display:flex;justify-content:space-between;margin-top:28px;}
+.btn-back{background:transparent;color:var(--t3);border:1px solid var(--border);padding:12px 24px;border-radius:4px;font-size:13px;cursor:pointer;font-family:var(--font);}
+.btn-next{background:var(--t1);color:#fff;border:none;padding:12px 32px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .15s;}
+.btn-next:disabled{background:var(--t4);cursor:not-allowed;}
+
+/* BOTTOM BAR */
+.bbar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.bchips{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.bprice{text-align:right;flex-shrink:0;}
+.bprice .pl{font-size:10px;color:var(--t4);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.bprice .pv{font-size:15px;font-weight:700;}
+.btn-gen{background:var(--t1);color:#fff;border:none;padding:12px 28px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0;transition:opacity .15s;}
+.btn-gen:disabled{background:var(--t4);cursor:not-allowed;}
+.btn-gen:not(:disabled):hover{opacity:.85;}
+
+/* LOADING */
+#screen-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.lsteps{display:flex;flex-direction:column;gap:20px;width:270px;margin-top:48px;}
+.li{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--t4);}
+.li.active{color:var(--t1);font-weight:600;}
+.spin{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);border-top-color:var(--t1);animation:spin .9s linear infinite;flex-shrink:0;}
+.ddot{width:20px;height:20px;border-radius:50%;background:var(--t1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wdot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* PROPOSAL */
+.hero{position:relative;height:100vh;min-height:560px;background:#111;overflow:hidden;}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,transparent 40%,rgba(0,0,0,.62) 100%);}
+.hero-nav{position:absolute;top:0;left:0;right:0;padding:22px 40px;display:flex;justify-content:space-between;align-items:center;z-index:2;}
+.logo-light{color:#fff;}
+.hero-date{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;}
+.hero-content{position:absolute;bottom:0;left:0;right:0;text-align:center;padding:0 24px 56px;color:#fff;z-index:2;}
+.hero-tag{font-size:11px;letter-spacing:5px;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:44px;font-weight:800;line-height:1.05;letter-spacing:-1px;margin-bottom:10px;}
+.hero-sub{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:32px;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-hp{background:rgba(255,255,255,.95);color:var(--t1);padding:12px 32px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);}
+.btn-hs{background:rgba(255,255,255,.12);color:#fff;padding:12px 32px;border-radius:4px;font-size:13px;border:1px solid rgba(255,255,255,.25);cursor:pointer;font-family:var(--font);}
+
+.statsbar{border-bottom:1px solid var(--border);}
+.sgrid{max-width:900px;margin:0 auto;display:grid;}
+.scell{padding:26px 20px;text-align:center;border-right:1px solid var(--border);}
+.scell:last-child{border-right:none;}
+.sl2{font-size:10px;letter-spacing:2px;color:var(--t4);text-transform:uppercase;margin-bottom:8px;}
+.sv{font-size:16px;font-weight:700;}
+
+.pbody{max-width:760px;margin:0 auto;padding:64px 32px 80px;}
+.seclabel{font-size:10px;letter-spacing:4px;color:var(--t4);text-transform:uppercase;margin-bottom:24px;text-align:center;}
+.narr{font-size:17px;color:var(--t3);line-height:1.9;text-align:center;max-width:600px;margin:0 auto 64px;padding-bottom:64px;border-bottom:1px solid var(--border);}
+
+.gallery{margin-bottom:64px;}
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:8px;overflow:hidden;}
+.gimg{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--bg);}
+.gimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.gimg:hover img{transform:scale(1.04);}
+.gcap{position:absolute;bottom:0;left:0;right:0;padding:20px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,.5));font-size:11px;color:rgba(255,255,255,.8);}
+
+.invest{text-align:center;padding:56px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:56px;}
+.iamt{font-size:52px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:8px;}
+.isep{color:var(--t4);font-weight:200;font-size:40px;margin:0 10px;}
+.inote{font-size:12px;color:var(--t4);margin-top:6px;margin-bottom:24px;}
+.ipill{display:inline-flex;align-items:center;gap:0;padding:14px 28px;background:var(--bg);border-radius:4px;}
+.ipitem{text-align:center;padding:0 16px;}
+.ipitem:not(:last-child){border-right:1px solid var(--border);}
+.ipl{font-size:10px;letter-spacing:1px;color:var(--t4);text-transform:uppercase;margin-bottom:3px;}
+.ipv{font-size:15px;font-weight:700;}
+
+.specs{margin-bottom:56px;}
+.specrow{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--border);}
+.spL{font-size:15px;color:var(--t3);}
+.spV{font-size:15px;font-weight:600;}
+
+/* Battery section */
+.batsec{background:var(--bg);padding:48px 40px;border-radius:4px;margin-bottom:56px;}
+.batsec-hdr{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}
+.btype-name{font-size:18px;font-weight:700;margin-bottom:4px;}
+.btype-sub{font-size:13px;color:var(--t3);margin-bottom:14px;}
+.bfeatlist{display:flex;flex-direction:column;gap:6px;}
+.bfeat2{font-size:13px;color:var(--t2);display:flex;align-items:center;gap:8px;}
+.bfeat2::before{content:"✓";color:var(--accent);font-weight:700;font-size:12px;}
+.ctitle{font-size:10px;letter-spacing:3px;color:var(--t4);text-transform:uppercase;margin-bottom:16px;padding-top:20px;border-top:1px solid var(--border);}
+.cgrid{display:flex;flex-wrap:wrap;gap:12px;}
+.citem{display:flex;flex-direction:column;align-items:center;gap:5px;width:70px;}
+.cicon{width:44px;height:44px;border-radius:10px;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.clabel{font-size:10px;color:var(--t3);text-align:center;line-height:1.3;}
+.citem.off .cicon{opacity:.25;}
+.citem.off .clabel{color:var(--t4);}
+
+.difgrid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:56px;}
+.dift{font-size:14px;font-weight:700;margin-bottom:6px;}
+.difd{font-size:13px;color:var(--t3);line-height:1.7;}
+
+.pasos{margin-bottom:56px;}
+.paso{display:flex;gap:24px;padding-bottom:28px;margin-bottom:28px;border-bottom:1px solid var(--border);}
+.paso:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.pnum{font-size:13px;font-weight:700;color:var(--t4);min-width:24px;padding-top:2px;}
+.pt{font-size:15px;font-weight:700;margin-bottom:5px;}
+.pd{font-size:13px;color:var(--t3);line-height:1.7;}
+
+.projs{padding:64px 0;border-top:1px solid var(--border);}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;}
+.pcard{}
+.pimg{border-radius:4px;overflow:hidden;aspect-ratio:16/10;position:relative;}
+.pimg img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.pcard:hover .pimg img{transform:scale(1.03);}
+.pmeta{padding:14px 0 0;}
+.pname2{font-size:14px;font-weight:700;margin-bottom:4px;}
+.pdet{font-size:12px;color:var(--t3);}
+
+.footer{background:var(--t1);color:#fff;padding:64px 40px;text-align:center;}
+.ftitle{font-size:28px;font-weight:700;letter-spacing:-.5px;margin:24px 0 8px;}
+.fsub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:36px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.7;}
+.fbtns{display:flex;gap:12px;justify-content:center;margin-bottom:48px;}
+.btn-fp{background:#fff;color:var(--t1);padding:13px 32px;border-radius:4px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:var(--font);}
+.btn-fs{background:transparent;color:rgba(255,255,255,.5);padding:13px 32px;border-radius:4px;font-size:14px;border:1px solid rgba(255,255,255,.15);cursor:pointer;font-family:var(--font);}
+.flegal{padding-top:32px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.2);line-height:1.8;}
+
+/* ══ HOME SCREEN ══════════════════════════════════════════════════════ */
+.home-hero{position:relative;height:100vh;min-height:580px;overflow:hidden;background:#111;}
+.home-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%;}
+.home-hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.08) 0%,transparent 35%,rgba(0,0,0,.55) 100%);}
+.home-nav{position:absolute;top:0;left:0;right:0;padding:22px 40px;display:flex;justify-content:space-between;align-items:center;z-index:2;}
+.home-hero-content{position:absolute;bottom:0;left:0;right:0;text-align:center;padding:0 24px 64px;z-index:2;color:#fff;}
+.home-eyebrow{font-size:11px;letter-spacing:5px;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:16px;}
+.home-title{font-size:48px;font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:14px;}
+.home-sub{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:36px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6;}
+.btn-home-cta{background:rgba(255,255,255,.95);color:#1b1b1b;padding:14px 40px;border-radius:4px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:var(--font);letter-spacing:.3px;transition:opacity .15s;}
+.btn-home-cta:hover{opacity:.88;}
+
+/* Projects section on home */
+.home-projs{padding:80px 32px 80px;}
+.home-projs-inner{max-width:1080px;margin:0 auto;}
+.home-projs-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:36px;}
+.home-projs-title{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+.home-projs-label{font-size:11px;letter-spacing:3px;color:var(--t4);text-transform:uppercase;}
+.hpgrid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.hpcard{position:relative;overflow:hidden;cursor:default;background:var(--bg);}
+.hpcard:nth-child(1){aspect-ratio:16/10;}
+.hpcard:nth-child(2){aspect-ratio:16/10;}
+.hpcard:nth-child(3){aspect-ratio:16/10;}
+.hpcard:nth-child(4){aspect-ratio:16/10;}
+.hpcard img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,.46,.45,.94);}
+.hpcard:hover img{transform:scale(1.04);}
+.hpcard-ov{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,rgba(0,0,0,.55) 100%);transition:opacity .3s;}
+.hpcard:hover .hpcard-ov{opacity:.85;}
+.hpcard-info{position:absolute;bottom:0;left:0;right:0;padding:24px 22px 18px;}
+.hpcard-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.hpcard-det{font-size:11px;color:rgba(255,255,255,.65);letter-spacing:.3px;}
+.hpcard-kw{display:inline-block;margin-top:6px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);text-transform:uppercase;background:rgba(255,255,255,.1);padding:3px 10px;border-radius:10px;backdrop-filter:blur(4px);}
+
+/* Home footer strip */
+.home-footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;align-items:center;justify-content:space-between;}
+.home-footer-legal{font-size:11px;color:var(--t4);}
+
+
+/* ── API KEY MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-box{background:#fff;border-radius:8px;padding:40px 36px;max-width:460px;width:90%;font-family:var(--font);}
+.modal-logo{display:flex;align-items:center;gap:8px;margin-bottom:28px;}
+.modal-title{font-size:20px;font-weight:800;color:#1b1b1b;margin-bottom:8px;}
+.modal-sub{font-size:13px;color:#5c5e62;line-height:1.6;margin-bottom:24px;}
+.modal-label{font-size:11px;letter-spacing:2px;color:#bcbec1;text-transform:uppercase;margin-bottom:8px;}
+.modal-input{width:100%;padding:12px 14px;border:1.5px solid #e5e5ea;border-radius:6px;font-size:13px;font-family:var(--font);outline:none;color:#1b1b1b;margin-bottom:6px;}
+.modal-input:focus{border-color:#1b1b1b;}
+.modal-hint{font-size:11px;color:#bcbec1;margin-bottom:20px;}
+.modal-hint a{color:#3882bd;text-decoration:none;}
+.modal-btn{width:100%;background:#1b1b1b;color:#fff;border:none;border-radius:6px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.modal-btn:hover{opacity:.85;}
+
+</style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div id="screen-home" class="screen">
+  <div class="home-hero">
+    <img src="" id="home-hero-img" alt="Silicon Plant">
+    <div class="home-hero-ov"></div>
+    <div class="home-nav">
+      <div class="logo" style="cursor:pointer"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="0" y="0" width="8" height="8" rx="1.5" fill="white"/><rect x="10" y="0" width="8" height="8" rx="1.5" fill="white"/><rect x="0" y="10" width="8" height="8" rx="1.5" fill="white"/><rect x="10" y="10" width="8" height="8" rx="1.5" fill="white"/></svg><span class="logo-text" style="color:#fff">SILICON PLANT</span></div>
+      <button class="btn-home-cta" style="padding:10px 24px;font-size:12px" onclick="goConfig()">Diseñar tu sistema →</button>
+    </div>
+    <div class="home-hero-content">
+      <div class="home-eyebrow">Uruguay &amp; Argentina · Sistemas Residenciales</div>
+      <div class="home-title">Tomá vos el control<br>de tu energía.</div>
+      <div class="home-sub">Diseñamos sistemas fotovoltaicos premium para residencias exclusivas en Uruguay y Argentina.</div>
+      <button class="btn-home-cta" onclick="goConfig()">Diseñar tu sistema →</button>
+    </div>
+  </div>
+
+  <div class="home-projs">
+    <div class="home-projs-inner">
+      <div class="home-projs-header">
+        <div class="home-projs-title">Proyectos realizados</div>
+        <div class="home-projs-label">Archivo Silicon Plant</div>
+      </div>
+      <div class="hpgrid" id="hp-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    <div class="logo" style="cursor:pointer"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="0" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="0" y="10" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="10" width="8" height="8" rx="1.5" fill="currentColor"/></svg><span class="logo-text" style="font-size:10px">SILICON PLANT</span></div>
+    <div class="home-footer-legal">Sistemas Solares de Alta Gama · Uruguay &amp; Argentina</div>
+  </div>
+</div>
+
+<!-- CONFIG SCREEN -->
+<div id="screen-config" class="screen">
+  <nav class="nav">
+    <div class="logo" onclick="goHome()" style="cursor:pointer"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="0" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="0" y="10" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="10" width="8" height="8" rx="1.5" fill="currentColor"/></svg><span class="logo-text">SILICON PLANT</span></div>
+    <div class="dots"><div class="dot active" id="d1" style="width:24px"></div><div class="dot" id="d2" style="width:8px"></div><div class="dot" id="d3" style="width:8px"></div></div>
+    <div style="font-size:11px;color:var(--t4);letter-spacing:1px" id="scnt">1 / 3</div>
+  </nav>
+  <div class="cfg-body" id="cfg-body"></div>
+  <div class="bbar" id="bbar" style="display:none">
+    <div class="bchips" id="bchips"></div>
+    <div id="bprice"></div>
+    <button class="btn-gen" id="bgen" disabled onclick="generate()">Generar presupuesto →</button>
+  </div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="screen-loading" class="screen hidden">
+  <nav class="nav"><div class="logo" onclick="goHome()" style="cursor:pointer"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="0" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="0" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="0" y="10" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="10" y="10" width="8" height="8" rx="1.5" fill="currentColor"/></svg><span class="logo-text">SILICON PLANT</span></div></nav>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:80px 24px;">
+    <div class="lsteps" id="lsteps">
+      <div class="li" id="li0"><div class="wdot"></div>Redactando propuesta narrativa</div>
+      <div class="li" id="li1"><div class="wdot"></div>Calculando sistema y métricas</div>
+      <div class="li" id="li2"><div class="wdot"></div>Finalizando propuesta</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPOSAL SCREEN -->
+<div id="screen-proposal" class="screen hidden"></div>
+
+<script>
+const IMGS = {
+  hero:  "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=85&fit=crop",
+  proj1: "https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=900&q=80&fit=crop",
+  proj2: "https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=900&q=80&fit=crop",
+  proj3: "https://images.unsplash.com/photo-1595437193398-f24279553f4f?w=900&q=80&fit=crop",
+};
+const PROJECTS = [
+  {name:"Villa Lagos",loc:"Laguna del Sauce, Maldonado",kw:50,sys:"Total Black",img:"hero"},
+  {name:"Casa Laguna",loc:"Laguna Country Club, Punta del Este",kw:22,sys:"Total Black",img:"proj1"},
+  {name:"Rincón del Bosque",loc:"José Ignacio, Rocha",kw:18,sys:"Premium PERC",img:"proj2"},
+  {name:"El Ombú",loc:"Pueblo Garzón, Maldonado",kw:30,sys:"Total Black",img:"proj3"},
+];
+const S = {step:1,kw:null,kwP:null,panel:null,bat:null};
+const SIZES = [
+  {id:"S",kw:5,l:"S",r:"3–6 kWp",d:"Consumo moderado"},
+  {id:"M",kw:10,l:"M",r:"7–12 kWp",d:"Uso intensivo"},
+  {id:"L",kw:17,l:"L",r:"13–20 kWp",d:"Gran superficie"},
+  {id:"XL",kw:23,l:"XL",r:"21+ kWp",d:"Proyectos premium"},
+];
+const PANELS = [
+  {id:"jinko",brand:"JinKo Solar",name:"Tiger Neo",model:"72HL4-BDV",w:600,type:"Bifacial N-Type",c:["#0d1e30","#1a3a50"],pr:[900,1050],pw:600,m2:2.0,g:"15 años producto · 30 años potencia"},
+  {id:"longi",brand:"LONGi Solar",name:"LR5-72HTH",model:"Bifacial",w:600,type:"Bifacial HIMO6",c:["#0c1c2e","#183050"],pr:[1050,1250],pw:600,m2:2.0,g:"15 años producto · 25 años potencia"},
+  {id:"tb",brand:"Silicon Plant",name:"Total Black",model:"Monocristalino PERC",w:415,type:"Marco Anodizado All-Black",c:["#0a0c0f","#141820"],pr:[1450,1750],pw:415,m2:1.7,g:"25 años potencia · 15 años producto"},
+];
+const BATS = [
+  {id:"none",name:"Sin almacenamiento",sub:"Solo generación fotovoltaica",feats:[],pa:[0,0],cargas:null,tag:null},
+  {id:"std",name:"Respaldo Esencial",sub:"Sistema Estándar · Batería Residencial",feats:["Ideal para cortes de red","Menor inversión inicial","Mantiene lo importante funcionando"],pa:[6500,9500],tag:"Estándar",tc:"tag-s",cargas:["Iluminación","Wi-Fi","Heladera","Agua","CCTV"]},
+  {id:"prem",name:"Cobertura Total",sub:"Sistema Premium · Batería Industrial",feats:["Gran autonomía energética","Gestión inteligente","Toda la vivienda cubierta"],pa:[22000,30000],tag:"Premium",tc:"tag-p",cargas:["Iluminación","Wi-Fi","Heladera","Agua","CCTV","Calefacción","Losa Radiante","Piscina","Cargador de Auto","Cocina"]},
+];
+const ALL_C = ["Iluminación","Wi-Fi","Heladera","Agua","CCTV","Calefacción","Losa Radiante","Piscina","Cargador de Auto","Cocina"];
+const CI = {"Iluminación":"💡","Wi-Fi":"📶","Heladera":"🧊","Agua":"💧","CCTV":"📹","Calefacción":"🌡️","Losa Radiante":"♨️","Piscina":"🏊","Cargador de Auto":"🔌","Cocina":"🍳"};
+const fmt=n=>Number(n||0).toLocaleString("es-UY");
+const rnd=n=>Math.round(n||0);
+function est(){
+  if(!S.kw||!S.panel)return null;
+  const p=PANELS.find(x=>x.id===S.panel),b=BATS.find(x=>x.id===S.bat);
+  const[lo,hi]=p.pr;
+  return{min:S.kw*lo+(b?b.pa[0]:0),max:S.kw*hi+(b?b.pa[1]:0)};
+}
+function svgChk(){return`<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
+function logoSvg(c){return`<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="0" y="0" width="8" height="8" rx="1.5" fill="${c}"/><rect x="10" y="0" width="8" height="8" rx="1.5" fill="${c}"/><rect x="0" y="10" width="8" height="8" rx="1.5" fill="${c}"/><rect x="10" y="10" width="8" height="8" rx="1.5" fill="${c}"/></svg>`;}
+
+function render(){
+  // Dots
+  [1,2,3].forEach(i=>{const d=document.getElementById(`d${i}`);d.className="dot"+(i===S.step?" active":i<S.step?" done":"");d.style.width=i===S.step?"24px":"8px";});
+  document.getElementById("scnt").textContent=`${S.step} / 3`;
+  // Bar
+  const bar=document.getElementById("bbar");
+  if(S.step>1){
+    bar.style.display="flex";
+    const chips=[
+      S.kwP&&`${S.kwP} · ${S.kw} kWp`,
+      S.panel&&PANELS.find(p=>p.id===S.panel)?.name,
+      S.bat&&S.bat!=="none"&&BATS.find(b=>b.id===S.bat)?.name,
+    ].filter(Boolean);
+    document.getElementById("bchips").innerHTML=chips.map(c=>`<span class="chip">${c}</span>`).join("");
+    const e=est();
+    document.getElementById("bprice").innerHTML=e?`<div class="bprice"><div class="pl">Estimado</div><div class="pv">USD ${fmt(e.min)} – ${fmt(e.max)}</div></div>`:"";
+    const ready=S.kw&&S.panel&&S.bat;
+    document.getElementById("bgen").disabled=!ready;
+  }else bar.style.display="none";
+  // Step
+  const b=document.getElementById("cfg-body");
+  if(S.step===1)s1(b);
+  if(S.step===2)s2(b);
+  if(S.step===3)s3(b);
+}
+
+function s1(b){
+  b.innerHTML=`
+    <div class="slabel">Paso 1</div>
+    <div class="stitle">Tamaño del sistema</div>
+    <div class="ssub">¿Cuánta potencia necesita tu hogar?</div>
+    <div class="size-grid">
+      ${SIZES.map(s=>`<div class="sc${S.kwP===s.id?" sel":""}" onclick="S.kwP='${s.id}';S.kw=${s.kw};render()">
+        <div class="sl">${s.l}</div><div class="sr">${s.r}</div><div class="sd">${s.d}</div>
+      </div>`).join("")}
+    </div>
+    ${S.kw?`<div class="slider-wrap"><div class="srow"><div class="skw">${S.kw}<span>kWp</span></div><div style="font-size:11px;color:var(--t4)">Ajustá con el slider</div></div><input type="range" min="3" max="25" step="0.5" value="${S.kw}" oninput="S.kw=parseFloat(this.value);S.kwP=null;render()"></div>`:""}
+    <div class="snav"><div></div><button class="btn-next" ${!S.kw?"disabled":""} onclick="S.step=2;render()">Continuar →</button></div>
+  `;
+}
+function s2(b){
+  b.innerHTML=`
+    <div class="slabel">Paso 2</div>
+    <div class="stitle">Tecnología de paneles</div>
+    <div class="ssub">Elegí el sistema fotovoltaico para tu proyecto</div>
+    <div class="plist">
+      ${PANELS.map(p=>`<div class="pc${S.panel===p.id?" sel":""}" onclick="S.panel='${p.id}';render()">
+        <div class="pcells">${Array.from({length:6}).map((_,i)=>`<div class="cell" style="background:${p.c[0]};border:1px solid ${p.c[1]}"></div>`).join("")}</div>
+        <div style="flex:1"><div class="pname">${p.name}</div><div class="pbrand">${p.brand} · ${p.type}</div><div class="pwatt">${p.w}W · ${p.g}</div></div>
+        <div class="chk">${S.panel===p.id?svgChk():""}</div>
+      </div>`).join("")}
+    </div>
+    <div class="snav"><button class="btn-back" onclick="S.step=1;render()">← Atrás</button><button class="btn-next" ${!S.panel?"disabled":""} onclick="S.step=3;render()">Continuar →</button></div>
+  `;
+}
+function s3(b){
+  b.innerHTML=`
+    <div class="slabel">Paso 3</div>
+    <div class="stitle">Sistema de baterías</div>
+    <div class="ssub">¿Querés almacenar la energía que generás?</div>
+    <div class="blist">
+      ${BATS.map(bat=>`<div class="bc${S.bat===bat.id?" sel":""}" onclick="S.bat='${bat.id}';render()">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="bname">${bat.name}${bat.tag?` <span class="btag ${bat.tc}">${bat.tag}</span>`:""}</div><div class="bsub">${bat.sub}</div></div>
+          <div class="chk" style="border-color:${S.bat===bat.id?"var(--t1)":"var(--border)"}">${S.bat===bat.id?svgChk():""}</div>
+        </div>
+        ${bat.feats.length?`<div class="bfeats">${bat.feats.map(f=>`<div class="bfeat">${f}</div>`).join("")}</div>`:""}
+        ${bat.cargas?`<div class="bcargas"><div class="cargas-label">Cargas cubiertas</div><div class="chip-row">${bat.cargas.map(c=>`<span class="chip">${c}</span>`).join("")}</div></div>`:""}
+      </div>`).join("")}
+    </div>
+    <div class="snav"><button class="btn-back" onclick="S.step=2;render()">← Atrás</button></div>
+  `;
+}
+
+async function generate(){
+  const p=PANELS.find(x=>x.id===S.panel),bat=BATS.find(x=>x.id===S.bat),e=est();
+  const paneles=rnd(S.kw*1000/p.pw),sup=rnd(paneles*p.m2);
+  document.getElementById("screen-config").classList.add("hidden");
+  document.getElementById("screen-loading").classList.remove("hidden");
+  const li=[0,1,2].map(i=>document.getElementById(`li${i}`));
+  function ph(i){li.forEach((l,j)=>{const icons=j<i?`<div class="ddot">${svgChk()}</div>`:j===i?`<div class="spin"></div>`:`<div class="wdot"></div>`;l.innerHTML=icons+[`Redactando propuesta narrativa`,`Calculando sistema y métricas`,`Finalizando propuesta`][j];l.className="li"+(j===i?" active":j<i?" done":"");});}
+  ph(0);
+  const batDesc=bat.id==="none"?"sin sistema de almacenamiento":`con ${bat.name} (${bat.sub}), cubriendo: ${bat.cargas?.join(", ")}`;
+  const SYS=`Sos redactor comercial premium de Silicon Plant, empresa solar residencial de alta gama en Uruguay. Generás propuestas técnico-comerciales sofisticadas y elegantes. El título NO debe mencionar specs técnicas.
+Fórmulas: producción=kW×4.5×365×0.8 | ahorro=producción×0.18 | roi=round(inv_promedio/ahorro×12)
+SOLO JSON sin backticks:
+{"titulo":"nombre poético evocador del proyecto sin specs","tagline":"frase muy corta max 8 palabras","descripcion":"3 frases narrativas premium sobre independencia energética y estilo de vida","ahorro_anual":0,"kwh_anuales":0,"roi_meses":0,"dias_obra":0,"diferenciales":[{"titulo":"","descripcion":""},{"titulo":"","descripcion":""},{"titulo":"","descripcion":""},{"titulo":"","descripcion":""}],"pasos":[{"titulo":"Visita técnica gratuita","descripcion":""},{"titulo":"Diseño definitivo del sistema","descripcion":""},{"titulo":"Instalación profesional","descripcion":""},{"titulo":"Monitoreo y soporte continuo","descripcion":""}]}`;
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"CONFIG_TOKEN","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1500,system:SYS,messages:[{role:"user",content:`Residencial | ${S.kw} kW | ${p.brand} ${p.name} ${p.w}W | Uruguay | ${batDesc}`}]})});
+    const d=await r.json();
+    if(!r.ok||d.error){
+      const msg=d.error?.message||`Error API: ${r.status}`;
+      if(r.status===401){alert("API Key inválida. Recargá la página para ingresar una nueva.");}
+      else{alert("Error: "+msg);}
+      document.getElementById("screen-config").classList.remove("hidden");
+      document.getElementById("screen-loading").classList.add("hidden");
+      return;
+    }
+    ph(1);
+    const txt=(d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").replace(/```json|```/g,"").trim();
+    let q;
+    try{q=JSON.parse(txt);}catch(pe){console.error("JSON parse error:",txt);alert("Error al parsear respuesta. Intentá nuevamente.");document.getElementById("screen-config").classList.remove("hidden");document.getElementById("screen-loading").classList.add("hidden");return;}
+    ph(2);
+    renderProp(q,p,bat,e,paneles,sup);
+  }catch(err){
+    console.error("Fetch error:",err);
+    const msg=err.message||"Error desconocido";
+    alert("Error de conexión: "+msg+"\n\nVerificá tu conexión y que la API Key sea válida.");
+    document.getElementById("screen-config").classList.remove("hidden");
+    document.getElementById("screen-loading").classList.add("hidden");
+  }
+}
+
+function renderProp(q,panel,bat,e,paneles,sup){
+  const hasBat=bat.id!=="none";
+  const nc=hasBat?5:4;
+  const batHTML=hasBat?`
+    <div class="batsec">
+      <div class="seclabel">Sistema de almacenamiento · ${bat.name}</div>
+      <div class="batsec-hdr">
+        <div><div class="btype-name">${bat.sub}</div><div class="btype-sub">${bat.feats[0]}</div><div class="bfeatlist">${bat.feats.map(f=>`<div class="bfeat2">${f}</div>`).join("")}</div></div>
+        <div><div style="font-size:11px;letter-spacing:2px;color:var(--t4);text-transform:uppercase;margin-bottom:6px">Tipo de cobertura</div><div style="font-size:16px;font-weight:700;margin-bottom:4px">${bat.id==="prem"?"Cobertura Total del Proyecto":"Cargas Críticas Esenciales"}</div><div style="font-size:13px;color:var(--t3)">${bat.id==="prem"?"Autonomía completa para toda la vivienda":"Respalda los circuitos prioritarios"}</div></div>
+      </div>
+      <div class="ctitle">CARGAS CUBIERTAS POR EL SISTEMA</div>
+      <div class="cgrid">${ALL_C.map(c=>{const on=bat.cargas?.includes(c);return`<div class="citem${on?"":" off"}"><div class="cicon">${CI[c]||"⚡"}</div><div class="clabel">${c}</div></div>`;}).join("")}</div>
+    </div>`:"";
+  const html=`
+    <div class="hero">
+      <div class="hero-nav"><div class="logo logo-light" onclick="goHome()" style="cursor:pointer">${logoSvg("#fff")}<span class="logo-text" style="color:#fff">SILICON PLANT</span></div><div class="hero-date">${new Date().toLocaleDateString("es-UY",{day:"numeric",month:"long",year:"numeric"})}</div></div>
+      <img src="${IMGS.hero}" alt="Silicon Plant">
+      <div class="hero-ov"></div>
+      <div class="hero-content">
+        <div class="hero-tag">Residencial · ${S.kw} kWp · ${panel.name}</div>
+        <div class="hero-title">${q.titulo}</div>
+        <div class="hero-sub">${q.tagline}</div>
+        <div class="hero-btns"><button class="btn-hp">Solicitar visita técnica</button><button class="btn-hs" onclick="resetCfg()">Nueva cotización</button></div>
+      </div>
+    </div>
+    <div class="statsbar"><div class="sgrid" style="grid-template-columns:repeat(${nc},1fr)">
+      <div class="scell"><div class="sl2">Inversión estimada</div><div class="sv">USD ${fmt(e.min)} – ${fmt(e.max)}</div></div>
+      <div class="scell"><div class="sl2">Ahorro anual</div><div class="sv">USD ${fmt(q.ahorro_anual)}</div></div>
+      <div class="scell"><div class="sl2">Retorno inversión</div><div class="sv">${q.roi_meses} meses</div></div>
+      <div class="scell"><div class="sl2">Producción anual</div><div class="sv">${fmt(q.kwh_anuales)} kWh</div></div>
+      ${hasBat?`<div class="scell"><div class="sl2">Almacenamiento</div><div class="sv">${bat.name}</div></div>`:""}
+    </div></div>
+    <div class="pbody">
+      <p class="narr">${q.descripcion}</p>
+      <div class="gallery"><div class="seclabel">Proyectos realizados</div><div class="ggrid">
+        <div class="gimg"><img src="${IMGS.proj1}" alt=""><div class="gcap">Laguna Country Club, Punta del Este</div></div>
+        <div class="gimg"><img src="${IMGS.proj2}" alt=""><div class="gcap">Rincón del Bosque, José Ignacio</div></div>
+        <div class="gimg"><img src="${IMGS.proj3}" alt=""><div class="gcap">El Ombú, Pueblo Garzón</div></div>
+        <div class="gimg"><img src="${IMGS.hero}" alt=""><div class="gcap">Villa Lagos, Laguna del Sauce</div></div>
+      </div></div>
+      <div class="invest">
+        <div class="seclabel">Inversión total estimada</div>
+        <div class="iamt">USD ${fmt(e.min)}<span class="isep">–</span>${fmt(e.max)}</div>
+        <div class="inote">${hasBat?`Sistema solar + ${bat.name}`:"Sistema solar fotovoltaico completo"}</div>
+        <div class="inote">Equipos e instalación · Sujeto a visita técnica en sitio</div>
+        <div class="ipill">
+          <div class="ipitem"><div class="ipl">Retorno</div><div class="ipv">${q.roi_meses} meses</div></div>
+          <div class="ipitem"><div class="ipl">CO₂/año</div><div class="ipv">${fmt(rnd(q.kwh_anuales*0.4/1000*1000))} kg</div></div>
+          <div class="ipitem"><div class="ipl">Módulos</div><div class="ipv">${paneles} ud.</div></div>
+        </div>
+      </div>
+      <div class="specs"><div class="seclabel">Especificaciones técnicas</div>
+        ${[["Panel fotovoltaico",`${panel.brand} ${panel.name} ${panel.w}W · ${panel.type}`],["Potencia nominal",`${S.kw} kWp`],["Cantidad de módulos",`${paneles} unidades`],["Superficie requerida",`${sup} m²`],["Garantía del sistema",panel.g],["Plazo de instalación",`${q.dias_obra} días hábiles`]].map(([l,v])=>`<div class="specrow"><span class="spL">${l}</span><span class="spV">${v}</span></div>`).join("")}
+      </div>
+      ${batHTML}
+      <div class="difgrid" style="margin-bottom:56px">
+        <div class="seclabel" style="grid-column:1/-1;margin-bottom:4px">Por qué Silicon Plant</div>
+        ${q.diferenciales.map(d=>`<div><div class="dift">${d.titulo}</div><div class="difd">${d.descripcion}</div></div>`).join("")}
+      </div>
+      <div class="pasos"><div class="seclabel">Proceso</div>
+        ${q.pasos.map((p,i)=>`<div class="paso"><div class="pnum">0${i+1}</div><div><div class="pt">${p.titulo}</div><div class="pd">${p.descripcion}</div></div></div>`).join("")}
+      </div>
+      <div class="projs"><div class="seclabel">Nuestros proyectos residenciales</div>
+        <div class="pgrid">
+          ${PROJECTS.map(p=>`<div class="pcard"><div class="pimg"><img src="${IMGS[p.img]}" alt="${p.name}"></div><div class="pmeta"><div class="pname2">${p.name}</div><div class="pdet">${p.loc} · ${p.kw} kWp ${p.sys}</div></div></div>`).join("")}
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      ${logoSvg("#fff")}
+      <div class="ftitle">Comenzá tu transición energética</div>
+      <div class="fsub">Agendá tu visita técnica gratuita. Nuestro equipo diseña el sistema definitivo para tu propiedad.</div>
+      <div class="fbtns"><button class="btn-fp">siliconplant.com</button><button class="btn-fs" onclick="goHome()">← Inicio</button><button class="btn-fs" onclick="resetCfg()">Nueva cotización</button></div>
+      <div class="flegal">SILICON PLANT · Sistemas Solares Residenciales de Alta Gama · Uruguay<br>Propuesta estimativa. Presupuesto definitivo sujeto a inspección técnica en sitio.</div>
+    </div>
+  `;
+  const ps=document.getElementById("screen-proposal");
+  ps.innerHTML=html;
+  document.getElementById("screen-loading").classList.add("hidden");
+  ps.classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function resetCfg(){
+  S.step=1;S.kw=null;S.kwP=null;S.panel=null;S.bat=null;
+  document.getElementById("screen-proposal").classList.add("hidden");
+  document.getElementById("screen-config").classList.remove("hidden");
+  render();window.scrollTo(0,0);
+}
+
+// ── Home screen ────────────────────────────────────────────────────────
+function goHome(){
+  ['screen-config','screen-loading','screen-proposal'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('screen-home').classList.remove('hidden');
+  window.scrollTo(0,0);
+  renderHome();
+}
+
+function goConfig(){
+  document.getElementById('screen-home').classList.add('hidden');
+  document.getElementById('screen-config').classList.remove('hidden');
+  render();
+  window.scrollTo(0,0);
+}
+
+function renderHome(){
+  // Set hero image
+  document.getElementById('home-hero-img').src = IMGS.hero;
+
+  // Render project grid
+  const grid = document.getElementById('hp-grid');
+  grid.innerHTML = PROJECTS.map(p => [
+    '<div class="hpcard" style="cursor:default">',
+    '<img src="' + IMGS[p.img] + '" alt="' + p.name + '">',
+    '<div class="hpcard-ov"></div>',
+    '<div class="hpcard-info">',
+    '<div class="hpcard-name">' + p.name + '</div>',
+    '<div class="hpcard-det">' + p.loc + '</div>',
+    '<div class="hpcard-kw">' + p.kw + ' kWp · ' + p.sys + '</div>',
+    '</div></div>',
+  ].join('')).join('');
+}
+
+// Start on home
+goHome();
+
+
+
+// ── API KEY MANAGEMENT ────────────────────────────────────────────────────
+function getApiKey() { return localStorage.getItem('sp_api_key') || ''; }
+
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key.startsWith('sk-ant')) {
+    alert('La clave debe comenzar con sk-ant-...');
+    return;
+  }
+  localStorage.setItem('sp_api_key', key);
+  document.getElementById('api-modal').style.display = 'none';
+}
+
+function checkApiKey() {
+  if (!getApiKey()) {
+    document.getElementById('api-modal').style.display = 'flex';
+    return false;
+  }
+  return true;
+}
+
+// Patch generate() to check key first
+// API key embedded — no modal needed
+
+</script>
+
+</body>
+</html>
