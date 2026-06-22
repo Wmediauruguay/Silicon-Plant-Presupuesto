@@ -451,11 +451,28 @@ SOLO JSON sin backticks:
 {"titulo":"nombre poético evocador del proyecto sin specs","tagline":"frase muy corta max 8 palabras","descripcion":"3 frases narrativas premium sobre independencia energética y estilo de vida","ahorro_anual":0,"kwh_anuales":0,"roi_meses":0,"dias_obra":0,"diferenciales":[{"titulo":"","descripcion":""},{"titulo":"","descripcion":""},{"titulo":"","descripcion":""},{"titulo":"","descripcion":""}],"pasos":[{"titulo":"Visita técnica gratuita","descripcion":""},{"titulo":"Diseño definitivo del sistema","descripcion":""},{"titulo":"Instalación profesional","descripcion":""},{"titulo":"Monitoreo y soporte continuo","descripcion":""}]}`;
   try{
     const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":getApiKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1500,system:SYS,messages:[{role:"user",content:`Residencial | ${S.kw} kW | ${p.brand} ${p.name} ${p.w}W | Uruguay | ${batDesc}`}]})});
-    ph(1);const d=await r.json();
+    const d=await r.json();
+    if(!r.ok||d.error){
+      const msg=d.error?.message||`Error API: ${r.status}`;
+      if(r.status===401){localStorage.removeItem('sp_api_key');alert("API Key inválida. Recargá la página para ingresar una nueva.");}
+      else{alert("Error: "+msg);}
+      document.getElementById("screen-config").classList.remove("hidden");
+      document.getElementById("screen-loading").classList.add("hidden");
+      return;
+    }
+    ph(1);
     const txt=(d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("").replace(/```json|```/g,"").trim();
-    const q=JSON.parse(txt);ph(2);
+    let q;
+    try{q=JSON.parse(txt);}catch(pe){console.error("JSON parse error:",txt);alert("Error al parsear respuesta. Intentá nuevamente.");document.getElementById("screen-config").classList.remove("hidden");document.getElementById("screen-loading").classList.add("hidden");return;}
+    ph(2);
     renderProp(q,p,bat,e,paneles,sup);
-  }catch(err){console.error(err);alert("Error al generar. Intentá nuevamente.");document.getElementById("screen-config").classList.remove("hidden");document.getElementById("screen-loading").classList.add("hidden");}
+  }catch(err){
+    console.error("Fetch error:",err);
+    const msg=err.message||"Error desconocido";
+    alert("Error de conexión: "+msg+"\n\nVerificá tu conexión y que la API Key sea válida.");
+    document.getElementById("screen-config").classList.remove("hidden");
+    document.getElementById("screen-loading").classList.add("hidden");
+  }
 }
 
 function renderProp(q,panel,bat,e,paneles,sup){
